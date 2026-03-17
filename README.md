@@ -132,6 +132,6 @@ PC 側でレーダー風のビジュアルUIとしてリアルタイム表示す
 ## 13. Arduinoスケッチ（実装済み）
 - ファイル: `arduino/radar_scanner/radar_scanner.ino`
 - 対応配線: TRIG=D9, ECHO=D10, SG90信号=D6
-- 出力形式: `angle,distance,timestamp`（CSV）
-- 距離取得は3サンプルの中央値を利用し、ノイズを軽減
+- 出力: 距離・サーボ角・状態をシリアルモニタへ表示
+- LEDマトリクス（Arduino UNO R4内蔵）に距離帯ごとのパターンを表示（警告時は点滅）
 
