@@ -128,3 +128,10 @@ PC 側でレーダー風のビジュアルUIとしてリアルタイム表示す
 3. PC 側で扇形スキャン表示（走査線 + 残像）を先行実装
 4. USB給電で不安定な場合はサーボ速度・角度制限を先に調整
 5. PoC完了後、必要に応じて B案へ移行判定
+
+## 13. Arduinoスケッチ（実装済み）
+- ファイル: `arduino/radar_scanner/radar_scanner.ino`
+- 対応配線: TRIG=D9, ECHO=D10, SG90信号=D6
+- 出力形式: `angle,distance,timestamp`（CSV）
+- 距離取得は3サンプルの中央値を利用し、ノイズを軽減
+
