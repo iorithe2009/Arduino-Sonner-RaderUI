@@ -121,16 +121,17 @@ Arduino UNO R4（WiFi / Minima どちらでも可）と超音波センサ（HC-S
 - もし不安定なら、次段階でサーボのみ外部5V化（GND共通）を検討
 
 ## 12. 次アクション
-1. 現行コード（LEDマトリクス表示版）の実機確認と閾値調整
-2. LEDマトリクスの表示を扇状に見える段階表示へチューニング
-3. 次段で `angle,distance,timestamp` 出力を追加し PC 連携へ接続
-4. USB給電で不安定な場合はサーボ速度・角度制限を先に調整
-5. PoC完了後、必要に応じて B案へ移行判定
+1. Phase 1 実機確認・閾値チューニング（完了後 main ブランチへマージ）
+2. Phase 2: PC アプリの実機接続確認（COMポート選択 → レーダー表示）
+3. Phase 2: ノイズ対策・FPS 調整（`FADE_SEC` / `ALPHA` パラメータ）
+4. 必要に応じて B案（Electron + WebGL）へ移行判定
 
-## 13. Arduinoスケッチ（Phase 1 Final 実装済み）
+## 13. 実装済みファイル
+
+### Arduino（Phase 1 + Phase 2 CSV出力）
 - ファイル: `arduino/radar_scanner/radar_scanner.ino`
 - 対応配線: TRIG=D9, ECHO=D10, SG90信号=D6
-- サーボ 10〜170° 往復スキャン（15°/ステップ、STEP_DELAY=50ms）
+- サーボ 10〜170° 往復スキャン（15°/ステップ、STEP_DELAY=200ms）
 - 距離計測: EMA ローパスフィルタ（α=0.3）、タイムアウト 12ms
 - 距離閾値（デモ用設定）:
   - WARNING: < 10 cm（全行点灯 + 点滅）
@@ -141,5 +142,17 @@ Arduino UNO R4（WiFi / Minima どちらでも可）と超音波センサ（HC-S
 - LEDマトリクス（12列×8行）に角度ゾーン別の距離プロファイルを扇状表示
   - 列 = 角度ゾーン（0〜11）、行数 = 距離帯（下から点灯）
   - 現在スキャン列は縦ライン強調、WARNING 列は 300ms 点滅
-- シリアルモニタへ `角度(deg)  距離(cm)  状態` を出力（9600bps）
+- シリアル出力（9600bps）:
+  - 人間可読: `角度(deg)  距離(cm)  状態`
+  - PC連携用 CSV: `$angle,distance_cm,millis`（OUT時は distance=-1）
+
+### PC アプリ（Phase 2）
+- ファイル: `pc_radar/main.py`
+- 依存: `pc_radar/requirements.txt`（PySide6, pyqtgraph, pyserial）
+- 起動: `pip install -r requirements.txt && python main.py`
+- 機能:
+  - COMポート選択・接続 / 切断・自動再接続（2秒リトライ）
+  - 半円レーダー表示（距離リング・角度線・走査線）
+  - 検出点を `FADE_SEC=5秒` でフェードアウト
+  - 現在角度・距離をリアルタイム表示（30FPS）
 
