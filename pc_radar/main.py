@@ -11,6 +11,7 @@ Arduino から '$angle,distance,millis' 形式の CSV を受信し、
 import sys
 import math
 import time
+import threading
 from collections import deque
 
 import serial
@@ -41,10 +42,11 @@ class SerialReader(QThread):
 
     def __init__(self, port: str, baud: int):
         super().__init__()
-        self._port    = port
-        self._baud    = baud
-        self._running = False
-        self._ser     = None
+        self._port      = port
+        self._baud      = baud
+        self._running   = False
+        self._ser       = None
+        self._stop_event = threading.Event()
 
     def run(self):
         self._running = True
@@ -72,15 +74,16 @@ class SerialReader(QThread):
                     except ValueError:
                         pass
 
-            except serial.SerialException:
+            except (serial.SerialException, TypeError):
                 self.connection_changed.emit(False)
-                time.sleep(2)   # 再接続まで待機
+                self._stop_event.wait(2)   # 再接続まで待機（stop() で即時中断可）
             finally:
                 if self._ser and self._ser.is_open:
                     self._ser.close()
 
     def stop(self):
         self._running = False
+        self._stop_event.set()
         if self._ser and self._ser.is_open:
             self._ser.close()
         self.wait()
