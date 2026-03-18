@@ -180,7 +180,7 @@ void loop() {
   // --- LED 表示 ---
   renderDisplay(col);
 
-  // --- シリアル出力 ---
+  // --- シリアル出力（人間可読） ---
   Serial.print(currentAngle);
   Serial.print("deg  ");
   if (dist > 0.0f && dist <= DIST_MAX) {
@@ -191,6 +191,19 @@ void loop() {
   }
   Serial.print("  ");
   Serial.println(distToStatus(dist));
+
+  // --- CSV出力（PC連携用: $angle,distance_cm,millis） ---
+  // distance が OUT/無効のときは -1 を出力
+  Serial.print('$');
+  Serial.print(currentAngle);
+  Serial.print(',');
+  if (dist > 0.0f && dist <= DIST_MAX) {
+    Serial.print(dist, 1);
+  } else {
+    Serial.print(-1);
+  }
+  Serial.print(',');
+  Serial.println(millis());
 
   delay(STEP_DELAY);
 
