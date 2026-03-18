@@ -49,6 +49,12 @@ source .venv/bin/activate
 
 # 依存パッケージをインストール
 uv pip install -r requirements.txt
+
+# インストール済みの場合は以下のコマンドで起動可能
+source .venv/bin/activate
+uv run python main.py
+
+
 ```
 
 以降の操作はすべて仮想環境が有効な状態 `(pc_radar)` で行う。
