@@ -1,10 +1,50 @@
 # Radar Scanner PC App セットアップ手順
 
-WSL2 (Ubuntu) 環境で Arduino と接続してレーダー表示アプリを動かすまでの手順。
+このドキュメントは、`pc_radar/main.py` を動かすための手順です。  
+**推奨は Windows 11 ネイティブ実行**で、WSL は代替手段として後半に記載します。
 
 ---
 
-## 前提環境
+## 1. Windows 11 ネイティブ実行（推奨）
+
+### 前提環境
+
+- Windows 11
+- Python 3.10 以上（`py` コマンドが使える状態）
+- Arduino UNO R4（または互換機）が USB 接続済み
+- Arduino IDE で `arduino/radar_scanner/radar_scanner.ino` を書き込み済み
+- Arduino IDE / シリアルモニタを閉じている（COM ポート占有回避）
+
+### 手順
+
+PowerShell で以下を実行:
+
+```powershell
+cd <このリポジトリ>\pc_radar
+py -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
+```
+
+### アプリ操作
+
+1. **Port** ドロップダウンから `COMx` を選択
+2. **Connect** をクリック
+3. 角度・距離が更新されれば接続成功
+
+### COM ポート確認（必要時）
+
+- デバイス マネージャー → 「ポート (COM と LPT)」で Arduino の `COMx` を確認
+- ポートが見つからない場合は USB ケーブル・ドライバ・Arduino IDE の占有を確認
+
+---
+
+## 2. WSL2 実行（代替）
+
+WSL2 (Ubuntu) 環境で Arduino と接続してレーダー表示アプリを動かす手順。
+
+### 前提環境
 
 - Windows 11
 - WSL2 (Ubuntu 22.04)
@@ -15,7 +55,7 @@ WSL2 (Ubuntu) 環境で Arduino と接続してレーダー表示アプリを動
 
 ---
 
-## 1. WSL 側: システムライブラリのインストール
+## 2-1. WSL 側: システムライブラリのインストール
 
 PyQt5 の xcb プラグインが依存するライブラリを一括インストールする。
 
@@ -36,7 +76,7 @@ sudo apt install -y \
 
 ---
 
-## 2. WSL 側: Python 仮想環境のセットアップ
+## 2-2. WSL 側: Python 仮想環境のセットアップ
 
 ```bash
 cd ~/master/code-test/pc_radar
@@ -61,7 +101,7 @@ uv run python main.py
 
 ---
 
-## 3. Windows 側: usbipd-win のインストール
+## 2-3. Windows 側: usbipd-win のインストール
 
 WSL2 は Windows の COM ポートを直接見えないため、USB デバイスを WSL に転送するツールが必要。
 
@@ -75,7 +115,7 @@ winget install usbipd
 
 ---
 
-## 4. Windows 側: Arduino を WSL2 にアタッチ
+## 2-4. Windows 側: Arduino を WSL2 にアタッチ
 
 ### 4-1. 接続中の USB デバイスを確認
 
@@ -115,7 +155,7 @@ usbipd attach --wsl --busid 1-4
 
 ---
 
-## 5. WSL 側: デバイスの確認
+## 2-5. WSL 側: デバイスの確認
 
 ```bash
 ls /dev/ttyACM*
@@ -124,7 +164,7 @@ ls /dev/ttyACM*
 
 ---
 
-## 6. アプリを起動
+## 2-6. アプリを起動
 
 ```bash
 cd ~/master/code-test/pc_radar
