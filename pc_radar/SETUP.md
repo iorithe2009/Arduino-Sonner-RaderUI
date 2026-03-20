@@ -29,6 +29,7 @@ python main.py
 
 > `Activate.ps1` 実行時に実行ポリシーでブロックされた場合は、PowerShell で一時的に  
 > `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` を実行してから再試行してください。
+> `uv run --with PyQt5 --with pyqtgraph --with pyserial python main.py` でもuv環境がある人は同様に起動できます。
 
 ### アプリ操作
 
