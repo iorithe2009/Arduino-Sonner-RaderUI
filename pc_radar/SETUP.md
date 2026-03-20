@@ -33,6 +33,8 @@ python main.py
 2. **Connect** をクリック
 3. 角度・距離が更新されれば接続成功
 
+> `Auto Connect` を使うと、Arduino らしい COM ポートを自動選択して接続できます。
+
 ### COM ポート確認（必要時）
 
 - デバイス マネージャー → 「ポート (COM と LPT)」で Arduino の `COMx` を確認

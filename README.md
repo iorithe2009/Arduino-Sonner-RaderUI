@@ -15,5 +15,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-起動後はアプリ上で COM ポートを選択し、`Connect` を押してください。  
+起動後はアプリ上で `Auto Connect` を押すと、Arduino らしい COM ポートを自動選択して接続します。  
+手動の場合は COM ポートを選択し、`Connect` を押してください。  
 より詳しい手順は `pc_radar/SETUP.md` を参照してください。
