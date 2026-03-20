@@ -10,7 +10,7 @@ WSL を使わずに `pc_radar/main.py` を動かす手順です。
 ```powershell
 cd pc_radar
 py -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python main.py
 ```

@@ -22,10 +22,13 @@ PowerShell で以下を実行:
 ```powershell
 cd <このリポジトリ>\pc_radar
 py -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python main.py
 ```
+
+> `Activate.ps1` 実行時に実行ポリシーでブロックされた場合は、PowerShell で一時的に  
+> `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` を実行してから再試行してください。
 
 ### アプリ操作
 
