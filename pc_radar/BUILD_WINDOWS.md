@@ -67,17 +67,6 @@
    - 生成フォルダ: `dist/RadarScanner/`
    - 実行ファイル: `dist/RadarScanner/RadarScanner.exe`
 
-### 補足（開発時の起動例）
-
-前タスクで利用していた起動コマンド例:
-
-```bash
-uv run --with pyqtgraph --with pyserial python main.py
-```
-
-- 上記は実行時に追加パッケージを解決して起動する用途。
-- ビルド時は再現性のため `requirements.txt` を先にインストールした環境で PyInstaller を実行する。
-
 ## 配布運用
 
 - 配布時は `dist/RadarScanner` フォルダを**フォルダごと**配布する。
