@@ -1,4 +1,4 @@
-# BUILD_WINDOWS
+# Windows ビルド手順
 
 ## Windows 向けビルド手順（PyInstaller）
 
@@ -22,10 +22,11 @@
 ## 配布運用
 
 - 配布時は `dist/RadarScanner` フォルダを**フォルダごと**配布する。
+- そのまま配布してもよいし、ZIP 化して配布してもよい。
 
 ## onefile 検証手順（任意）
 
-問題なく onedir 版が動作することを確認できたら、必要に応じて onefile 版も検証する。
+onedir 版の動作確認が完了したら、必要に応じて onefile 版も検証する。
 
 ```bash
 pyinstaller --noconfirm --windowed --onefile --name RadarScanner main.py
