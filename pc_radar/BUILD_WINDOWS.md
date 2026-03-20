@@ -22,7 +22,7 @@
 3. まずは **onedir** 形式でビルドする。
 
    ```bash
-   pyinstaller --noconfirm --windowed --name RadarScanner main.py
+   pyinstaller --noconfirm --windowed --hidden-import serial --name RadarScanner main.py
    ```
 
 4. 生成物を確認する。
@@ -59,7 +59,7 @@
 5. まずは **onedir** 形式でビルドする。
 
    ```bash
-   uv run pyinstaller --noconfirm --windowed --name RadarScanner main.py
+   uv run pyinstaller --noconfirm --windowed --hidden-import serial --name RadarScanner main.py
    ```
 
 6. 生成物を確認する。
@@ -77,13 +77,13 @@
 onedir 版の動作確認が完了したら、必要に応じて onefile 版も検証する。
 
 ```bash
-pyinstaller --noconfirm --windowed --onefile --name RadarScanner main.py
+pyinstaller --noconfirm --windowed --onefile --hidden-import serial --name RadarScanner main.py
 ```
 
 uv 版で実施する場合:
 
 ```bash
-uv run pyinstaller --noconfirm --windowed --onefile --name RadarScanner main.py
+uv run pyinstaller --noconfirm --windowed --onefile --hidden-import serial --name RadarScanner main.py
 ```
 
 - 生成される実行ファイルの場所: `dist/RadarScanner.exe`
