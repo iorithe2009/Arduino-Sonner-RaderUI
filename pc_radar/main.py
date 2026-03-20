@@ -31,6 +31,7 @@ DIST_RINGS   = [25, 50, 75, 100]   # 距離リング (cm)
 FADE_SEC     = 5.0          # 点がフェードアウトするまでの秒数
 MAX_POINTS   = 500          # リングバッファ上限
 FPS          = 30
+ARDUINO_HINTS = ("arduino", "uno", "ch340", "usb serial")
 
 
 # ── シリアル受信スレッド ─────────────────────────────────────────────
@@ -238,6 +239,10 @@ class MainWindow(QMainWindow):
         self._connect_btn.clicked.connect(self._toggle_connect)
         bar.addWidget(self._connect_btn)
 
+        auto_btn = self._styled_button("Auto Connect")
+        auto_btn.clicked.connect(self._auto_connect)
+        bar.addWidget(auto_btn)
+
         self._conn_label = QLabel("● Disconnected")
         self._conn_label.setStyleSheet("color:#ff4444; font-size:13px;")
         bar.addWidget(self._conn_label)
@@ -276,8 +281,33 @@ class MainWindow(QMainWindow):
 
     def _refresh_ports(self):
         self._port_combo.clear()
-        for p in serial.tools.list_ports.comports():
+        ports = list(serial.tools.list_ports.comports())
+        for p in ports:
             self._port_combo.addItem(p.device)
+        self._select_best_port(ports)
+
+    def _select_best_port(self, ports):
+        if not ports:
+            return
+
+        # Arduino らしいポートを優先選択
+        best_idx = 0
+        for idx, p in enumerate(ports):
+            txt = f"{p.device} {p.description} {p.hwid}".lower()
+            if any(hint in txt for hint in ARDUINO_HINTS):
+                best_idx = idx
+                break
+        self._port_combo.setCurrentIndex(best_idx)
+
+    def _auto_connect(self):
+        if self._reader and self._reader.isRunning():
+            return
+        self._refresh_ports()
+        if self._port_combo.count() == 0:
+            self._conn_label.setText("● No serial port found")
+            self._conn_label.setStyleSheet("color:#ffbb33; font-size:13px;")
+            return
+        self._toggle_connect()
 
     def _toggle_connect(self):
         if self._reader and self._reader.isRunning():
@@ -304,7 +334,7 @@ class MainWindow(QMainWindow):
 
     def _on_connection(self, connected: bool):
         if connected:
-            self._conn_label.setText("● Connected")
+            self._conn_label.setText(f"● Connected ({self._port_combo.currentText()})")
             self._conn_label.setStyleSheet("color:#00ff41; font-size:13px;")
         else:
             self._conn_label.setText("● Disconnected")

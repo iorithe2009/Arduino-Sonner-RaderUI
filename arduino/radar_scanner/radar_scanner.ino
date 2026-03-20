@@ -54,6 +54,13 @@ Servo           myServo;
 ArduinoLEDMatrix matrix;
 
 // ============================================================
+// 距離の有効判定
+// ============================================================
+bool isValidDistance(float dist) {
+  return (dist > 0.0f && dist <= DIST_MAX);
+}
+
+// ============================================================
 // 距離計測 + EMA ローパスフィルタ（タイムアウト 12ms ≈ 約 205 cm、DIST_MAX=100cm に対して余裕を持たせた設定）
 // タイムアウト（0 返り）はフィルタに通さず前回値をそのまま返す
 // ============================================================
@@ -133,11 +140,43 @@ void renderDisplay(int activCol) {
 // 距離 → 状態文字列
 // ============================================================
 const char* distToStatus(float dist) {
-  if (dist <= 0.0f || dist > DIST_MAX) return "OUT";
+  if (!isValidDistance(dist))          return "OUT";
   if (dist < DIST_WARNING)             return "WARNING";
   if (dist < DIST_NEAR)                return "NEAR";
   if (dist < DIST_MID)                 return "MID";
   return "FAR";
+}
+
+// ============================================================
+// シリアル出力（人間可読）
+// ============================================================
+void printHumanReadable(int angle, float dist) {
+  Serial.print(angle);
+  Serial.print("deg  ");
+  if (isValidDistance(dist)) {
+    Serial.print(dist, 1);
+    Serial.print("cm");
+  } else {
+    Serial.print("---.-cm");
+  }
+  Serial.print("  ");
+  Serial.println(distToStatus(dist));
+}
+
+// ============================================================
+// シリアル出力（PC連携 CSV）
+// ============================================================
+void printCsvFrame(int angle, float dist) {
+  Serial.print('$');
+  Serial.print(angle);
+  Serial.print(',');
+  if (isValidDistance(dist)) {
+    Serial.print(dist, 1);
+  } else {
+    Serial.print(-1);
+  }
+  Serial.print(',');
+  Serial.println(millis());
 }
 
 // ============================================================
@@ -181,29 +220,11 @@ void loop() {
   renderDisplay(col);
 
   // --- シリアル出力（人間可読） ---
-  Serial.print(currentAngle);
-  Serial.print("deg  ");
-  if (dist > 0.0f && dist <= DIST_MAX) {
-    Serial.print(dist, 1);
-    Serial.print("cm");
-  } else {
-    Serial.print("---.-cm");
-  }
-  Serial.print("  ");
-  Serial.println(distToStatus(dist));
+  printHumanReadable(currentAngle, dist);
 
   // --- CSV出力（PC連携用: $angle,distance_cm,millis） ---
   // distance が OUT/無効のときは -1 を出力
-  Serial.print('$');
-  Serial.print(currentAngle);
-  Serial.print(',');
-  if (dist > 0.0f && dist <= DIST_MAX) {
-    Serial.print(dist, 1);
-  } else {
-    Serial.print(-1);
-  }
-  Serial.print(',');
-  Serial.println(millis());
+  printCsvFrame(currentAngle, dist);
 
   delay(STEP_DELAY);
 
